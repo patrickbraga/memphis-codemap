@@ -43,6 +43,9 @@ function setupMap() {
         line_layers_label = ['NPI Control', 'Code Enf 5yrs'];
         loadLineLayers(map, line_layers, ['#33658a', '#ca050b']);
 
+        const text_layers = ['ownerimprov', 'partner'];
+        text_layers_label = ['Homeowner Impr.', 'Partner Prop.'];
+        loadTextLayers(map, text_layers, ['X', 'P']);
 
 
         // Combine the arrays into a single one for the menu
@@ -50,12 +53,14 @@ function setupMap() {
             .concat(pinstripe_layers)
             .concat(recent_sales_layer)
             .concat(dash_layers)
-            .concat(line_layers);
+            .concat(line_layers)
+            .concat(text_layers);
         menu_labels = fill_layers_label
             .concat(pinstripe_layers_label)
             .concat(recent_sales_layer_label)
             .concat(dash_layers_label)
-            .concat(line_layers_label);
+            .concat(line_layers_label)
+            .concat(text_layers_label);
 
         /* Clickable layers
         Source: https://docs.mapbox.com/mapbox-gl-js/example/toggle-layers/ 
@@ -178,6 +183,25 @@ function loadLineLayers(map, layers_array, colors_array) {
             'paint': {
                 'line-color': colors_array[i],
                 'line-width': 2
+            }
+        }
+        )
+    }
+}
+
+function loadTextLayers(map, layers_array, text_array) {
+    for (i = 0; i < layers_array.length; i++) {
+        current_layer = layers_array[i];
+        map.addLayer({
+            'id': String(current_layer),
+            'type': 'symbol',
+            'source': {
+                'type': 'geojson',
+                'data': `./geojson/${current_layer}.geojson`
+            },
+            'layout': {
+                'text-field': text_array[i],
+                'text-size': 10
             }
         }
         )
