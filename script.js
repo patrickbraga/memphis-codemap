@@ -35,9 +35,19 @@ function setupMap() {
         recent_sales_layer_label = ['Recent Sales'];
         loadRecentSales(map);
 
+        const dash_layers = ['multifamily', 'duplex', 'tax-sale'];
+        dash_layers_label = ['Multifamily', 'Duplex', 'Tax Sale'];
+        loadDashLayers(map, dash_layers, ['#a45200', '#ff0178', '#ca050b'], [2, 2, 3], [[4, 2], [4, 2], [2, 1.5]]);
+
         // Combine the arrays into a single one for the menu
-        menu = fill_layers.concat(pinstripe_layers).concat(recent_sales_layer);
-        menu_labels = fill_layers_label.concat(pinstripe_layers_label).concat(recent_sales_layer_label);
+        menu = fill_layers
+            .concat(pinstripe_layers)
+            .concat(recent_sales_layer)
+            .concat(dash_layers);
+        menu_labels = fill_layers_label
+            .concat(pinstripe_layers_label)
+            .concat(recent_sales_layer_label)
+            .concat(dash_layers_label);
 
         /* Clickable layers
         Source: https://docs.mapbox.com/mapbox-gl-js/example/toggle-layers/ 
@@ -125,6 +135,26 @@ function loadUniversal(map) {
                 <p><b>Last sale:</b> ${feature.properties.universal_Last_Sale}</p>`)
             .addTo(map);
     });
+}
+
+function loadDashLayers(map, layers_array, colors_array, thickness_array, dashes_array) {
+    for (i = 0; i < layers_array.length; i++) {
+        current_layer = layers_array[i];
+        map.addLayer({
+            'id': String(current_layer),
+            'type': 'line',
+            'source': {
+                'type': 'geojson',
+                'data': `./geojson/${current_layer}.geojson`
+            },
+            'paint': {
+                'line-color': colors_array[i],
+                'line-dasharray': dashes_array[i],
+                'line-width': thickness_array[i]
+            }
+        }
+        )
+    }
 }
 
 function loadFillLayers(map, layers_array, colors_array, opacity_array) {
@@ -226,6 +256,8 @@ function loadRecentSales(map) {
             id: 'recent-sales',
             source: 'recent-sales',
             type: 'symbol',
+            maxzoom: 24,
+            minzoom: 0,
             layout: {
                 'icon-image': 'pointer',
                 'icon-size': 0.6
