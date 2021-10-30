@@ -43,9 +43,9 @@ function setupMap() {
         line_layers_label = ['NPI Control', 'Code Enf 5yrs'];
         loadLineLayers(map, line_layers, ['#33658a', '#ca050b']);
 
-        const text_layers = ['ownerimprov', 'partner'];
-        text_layers_label = ['Homeowner Impr.', 'Partner Prop.'];
-        loadTextLayers(map, text_layers, ['X', 'P']);
+        const text_layers = ['ownerimprov', 'partner', 'vacantbldg'];
+        text_layers_label = ['Homeowner Impr.', 'Partner Prop.', 'Vacant Bldg'];
+        loadTextLayers(map, text_layers, ['X', 'P', '■']);
 
 
         // Combine the arrays into a single one for the menu
