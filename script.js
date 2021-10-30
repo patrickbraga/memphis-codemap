@@ -39,15 +39,23 @@ function setupMap() {
         dash_layers_label = ['Multifamily', 'Duplex', 'Tax Sale'];
         loadDashLayers(map, dash_layers, ['#a45200', '#ff0178', '#ca050b'], [2, 2, 3], [[4, 2], [4, 2], [2, 1.5]]);
 
+        const line_layers = ['NPIcontrol', 'code5'];
+        line_layers_label = ['NPI Control', 'Code Enf 5yrs'];
+        loadLineLayers(map, line_layers, ['#33658a', '#ca050b']);
+
+
+
         // Combine the arrays into a single one for the menu
         menu = fill_layers
             .concat(pinstripe_layers)
             .concat(recent_sales_layer)
-            .concat(dash_layers);
+            .concat(dash_layers)
+            .concat(line_layers);
         menu_labels = fill_layers_label
             .concat(pinstripe_layers_label)
             .concat(recent_sales_layer_label)
-            .concat(dash_layers_label);
+            .concat(dash_layers_label)
+            .concat(line_layers_label);
 
         /* Clickable layers
         Source: https://docs.mapbox.com/mapbox-gl-js/example/toggle-layers/ 
@@ -151,6 +159,25 @@ function loadDashLayers(map, layers_array, colors_array, thickness_array, dashes
                 'line-color': colors_array[i],
                 'line-dasharray': dashes_array[i],
                 'line-width': thickness_array[i]
+            }
+        }
+        )
+    }
+}
+
+function loadLineLayers(map, layers_array, colors_array) {
+    for (i = 0; i < layers_array.length; i++) {
+        current_layer = layers_array[i];
+        map.addLayer({
+            'id': String(current_layer),
+            'type': 'line',
+            'source': {
+                'type': 'geojson',
+                'data': `./geojson/${current_layer}.geojson`
+            },
+            'paint': {
+                'line-color': colors_array[i],
+                'line-width': 2
             }
         }
         )
