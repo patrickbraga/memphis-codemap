@@ -16,8 +16,18 @@ function setupMap() {
         hash: true //update latlong and zoom level in URL to make sharing easier
     });
 
+    // add search function and navigation controls
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl
+        })
+    );
+
     const nav = new mapboxgl.NavigationControl({ showCompass: false });
     map.addControl(nav);
+
+
 
     map.on('load', () => {
         loadUniversal(map); //load this first so it's beneath the other features
@@ -27,9 +37,9 @@ function setupMap() {
         loadFillLayers(map, fill_layers, ['#bda', '#fdd', '#842', '#bda'], [0.6, 0.7, 0.4, 0.6]);
 
         console.log("will try to add pinstripes");
-        const pinstripe_layers = ['commercial', 'religious', 'public_not_tax_sale'];
-        pinstripe_layers_label = ['Commercial', 'Religious', 'Publicly Owned'];
-        loadPinstripeLayers(map, pinstripe_layers, ['red', 'blue', 'red']);
+        const pinstripe_layers = ['commercial', 'religious', 'public_not_tax_sale', 'rentrehab'];
+        pinstripe_layers_label = ['Commercial', 'Religious', 'Publicly Owned', 'NPI Rent-Rehab'];
+        loadPinstripeLayers(map);
 
         const recent_sales_layer = ['recent-sales'];
         recent_sales_layer_label = ['Recent Sales'];
@@ -201,7 +211,8 @@ function loadTextLayers(map, layers_array, text_array) {
             },
             'layout': {
                 'text-field': text_array[i],
-                'text-size': 10
+                'text-size': 10,
+                'text-offset': [.35, 0]
             }
         }
         )
@@ -229,7 +240,7 @@ function loadFillLayers(map, layers_array, colors_array, opacity_array) {
     }
 }
 
-function loadPinstripeLayers(map, layers_array, image_array) {
+function loadPinstripeLayers(map) {
     // to implement: throw an error if layers_array and colors_array are different lengths
     //console.log(String(layers_array));
     //console.log(String(image_array));
@@ -287,6 +298,25 @@ function loadPinstripeLayers(map, layers_array, image_array) {
             type: 'fill',
             paint: {
                 'fill-pattern': 'pinstripe-red'
+            }
+        });
+    });
+
+    map.loadImage('./img/hash-green.png', (error, hash_green) => {
+        if (error) throw error;
+        // Add the loaded image to the style's sprite with the ID 'pattern'.
+        map.addImage('hash_green', hash_green);
+        map.addSource('rentrehab', {
+            type: 'geojson',
+            data: './geojson/rentrehab.geojson'
+        });
+
+        map.addLayer({
+            id: 'rentrehab',
+            source: 'rentrehab',
+            type: 'fill',
+            paint: {
+                'fill-pattern': 'hash_green'
             }
         });
     });
